@@ -20,14 +20,10 @@ DNSHE_SUBDOMAIN_IDS=3,5,7
 ```
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
 ```
-
-### 3. 上传文件
-
-上传以下文件到GitHub仓库：
-
-- `simple_renewal.py` - 主脚本
-- `.github/workflows/simple-renewal.yml` - Actions配置
-- `.gitignore_simple` - 忽略文件
+### 3. 文件
+- `renewal.py` - 主脚本
+- `.github/workflows/renewal.yml` - Actions配置
+- `.gitignore` - 忽略文件
 
 ### 4. 启用自动执行
 
@@ -47,10 +43,3 @@ SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
 
 - `DNSHE_SUBDOMAIN_IDS`: 要续期的子域名ID，用逗号分隔
 - 邮件配置已移除，改用更安全的GitHub通知
-
-## 安全优势
-
-- ✅ **无需邮箱密码** - 避免密码泄露风险
-- ✅ **GitHub原生通知** - 集成在Actions中
-- ✅ **可选Slack** - 需要时才配置
-- ✅ **最小权限** - 只需要必要的API密钥
