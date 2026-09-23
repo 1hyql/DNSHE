@@ -1,0 +1,49 @@
+name: DNSHE域名续期
+
+on:
+  schedule:
+    - cron: '0 2 1 * *'  # 每月1号凌晨2点
+  workflow_dispatch:
+
+jobs:
+  renew:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 设置Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: 安装依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+        
+    - name: 运行续期脚本
+      env:
+        DNSHE_API_KEY: ${{ secrets.DNSHE_API_KEY }}
+        DNSHE_API_SECRET: ${{ secrets.DNSHE_API_SECRET }}
+        DNSHE_SUBDOMAIN_IDS: ${{ secrets.DNSHE_SUBDOMAIN_IDS }}
+      run: |
+        python simple_renewal.py
+        
+    - name: 上传结果
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: renewal-results
+        path: |
+          *.log
+          
+    - name: 发送失败通知
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        text: 'DNSHE域名续期失败，请查看日志'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
