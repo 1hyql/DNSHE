@@ -25,15 +25,11 @@ DNSHE_SUBDOMAIN_IDS=3,5,7
 
 ## 通知方式
 
-### 1. GitHub Actions通知（默认）
+###  GitHub Actions通知（默认）
 - 在Actions页面显示结果
 - 成功/失败状态清晰可见
 
-### 2. Slack通知（可选）
-- 配置Webhook后发送失败通知
-- 实时提醒
 
 ## 配置说明
 
-- `DNSHE_SUBDOMAIN_IDS`: 要续期的子域名ID，用逗号分隔
-- 邮件配置已移除，改用更安全的GitHub通知
+- `DNSHE_SUBDOMAIN_IDS`: 支持多域名续期，要续期的子域名ID，用英文逗号分隔
