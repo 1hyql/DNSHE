@@ -14,18 +14,12 @@ DNSHE_API_SECRET=your_api_secret_here
 DNSHE_SUBDOMAIN_IDS=3,5,7
 ```
 
-### 2. 可选：Slack通知
-
-如果需要Slack通知，添加：
-```
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
-```
-### 3. 文件
+### 2. 文件
 - `renewal.py` - 主脚本
 - `.github/workflows/renewal.yml` - Actions配置
 - `.gitignore` - 忽略文件
 
-### 4. 启用自动执行
+### 3. 启用自动执行
 
 脚本会每月1号凌晨2点自动运行，也可以手动触发。
 
