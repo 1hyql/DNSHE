@@ -40,7 +40,7 @@ jobs:
           *.log
           
     - name: 发送失败通知
-      if: failure()
+      if: failure() && secrets.SLACK_WEBHOOK_URL
       uses: 8398a7/action-slack@v3
       with:
         status: failure

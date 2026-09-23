@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-DNSHE域名续期脚本 - 简化版
+DNSHE域名续期脚本
 """
 
 import requests
@@ -41,8 +41,16 @@ def renew_subdomain(subdomain_id):
         response = requests.post(url, params=params, json=data, headers=headers, timeout=30)
         response.raise_for_status()
         return response.json()
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 422:
+            # 422错误是"renewal not yet available"，正常情况，不报错
+            logger.info(f"子域名ID {subdomain_id} 未到续期时间，跳过续期")
+            return None
+        else:
+            logger.error(f"续期失败: {str(e)}")
+            raise
     except Exception as e:
-        logger.error(f"续期失败: {str(e)}")
+        logger.error(f"续期异常: {str(e)}")
         raise
 
 def main():
@@ -56,6 +64,7 @@ def main():
     
     success_count = 0
     failure_count = 0
+    skipped_count = 0
     results = []
     
     for subdomain_id in subdomain_ids:
@@ -63,7 +72,11 @@ def main():
             logger.info(f"正在续期子域名ID: {subdomain_id}")
             result = renew_subdomain(subdomain_id)
             
-            if result.get('success'):
+            if result is None:
+                # 422错误，跳过续期
+                skipped_count += 1
+                results.append(f"⏭️ 子域名ID {subdomain_id} 未到续期时间，跳过")
+            elif result.get('success'):
                 success_count += 1
                 results.append(f"✓ 子域名ID {subdomain_id} 续期成功")
                 logger.info(f"续期成功: {result.get('message', '无消息')}")
@@ -82,17 +95,21 @@ def main():
 =====================
 成功: {success_count} 个
 失败: {failure_count} 个
+跳过: {skipped_count} 个
 总计: {len(subdomain_ids)} 个
 
 详细结果:
 {chr(10).join(results)}
 """
     
-    logger.info(f"续期完成: 成功 {success_count} 个, 失败 {failure_count} 个")
+    logger.info(f"续期完成: 成功 {success_count} 个, 失败 {failure_count} 个, 跳过 {skipped_count} 个")
     
     # 发送GitHub通知
     if failure_count > 0:
         subject = f"⚠️ DNSHE续期报告 - 有 {failure_count} 个失败"
+        send_github_notification(subject, report)
+    elif skipped_count > 0:
+        subject = f"ℹ️ DNSHE续期报告 - 全部跳过 ({skipped_count} 个)"
         send_github_notification(subject, report)
     else:
         subject = f"✅ DNSHE续期报告 - 全部成功 ({success_count} 个)"
