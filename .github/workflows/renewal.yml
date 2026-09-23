@@ -38,12 +38,3 @@ jobs:
         name: renewal-results
         path: |
           *.log
-          
-    - name: 发送失败通知
-      if: failure() && secrets.SLACK_WEBHOOK_URL
-      uses: 8398a7/action-slack@v3
-      with:
-        status: failure
-        text: 'DNSHE域名续期失败，请查看日志'
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

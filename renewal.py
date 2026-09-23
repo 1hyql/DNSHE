@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-DNSHE域名续期脚本
+DNSHE域名续期脚本 - 简化版
 """
 
 import requests
@@ -10,12 +10,6 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-def send_github_notification(subject, body):
-    """使用GitHub Actions输出通知"""
-    print(f"::notice::{subject}")
-    print(f"::notice::{body}")
-    logger.info(f"GitHub通知: {subject}")
 
 def renew_subdomain(subdomain_id):
     """续期子域名"""
@@ -59,7 +53,6 @@ def main():
     
     if not subdomain_ids:
         logger.error("未配置子域名ID")
-        send_github_notification("DNSHE续期失败", "未配置子域名ID")
         return False
     
     success_count = 0
@@ -103,17 +96,6 @@ def main():
 """
     
     logger.info(f"续期完成: 成功 {success_count} 个, 失败 {failure_count} 个, 跳过 {skipped_count} 个")
-    
-    # 发送GitHub通知
-    if failure_count > 0:
-        subject = f"⚠️ DNSHE续期报告 - 有 {failure_count} 个失败"
-        send_github_notification(subject, report)
-    elif skipped_count > 0:
-        subject = f"ℹ️ DNSHE续期报告 - 全部跳过 ({skipped_count} 个)"
-        send_github_notification(subject, report)
-    else:
-        subject = f"✅ DNSHE续期报告 - 全部成功 ({success_count} 个)"
-        send_github_notification(subject, report)
     
     return failure_count == 0
 
