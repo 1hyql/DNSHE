@@ -29,7 +29,7 @@ jobs:
         DNSHE_API_SECRET: ${{ secrets.DNSHE_API_SECRET }}
         DNSHE_SUBDOMAIN_IDS: ${{ secrets.DNSHE_SUBDOMAIN_IDS }}
       run: |
-        python simple_renewal.py
+        python renewal.py
         
     - name: 上传结果
       if: always()
